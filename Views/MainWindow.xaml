@@ -1,0 +1,42 @@
+﻿<Window x:Class="SampleWPFApplication.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+        xmlns:v="clr-namespace:SampleWPFApplication.Views"
+        xmlns:vm="clr-namespace:SampleWPFApplication.ViewModels"
+        Title="社員リスト" Height="300" Width="500" WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closed">
+            <l:DataContextDisposeAction/>
+        </i:EventTrigger>
+        
+        <l:InteractionMessageTrigger MessageKey="EditCommand" Messenger="{Binding Messenger}">
+            <l:TransitionInteractionMessageAction 
+                WindowType="{x:Type v:SubWindow}" Mode="Modal" />
+        </l:InteractionMessageTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Persons}" IsReadOnly="True" 
+                  SelectedItem="{Binding Person}" AutoGenerateColumns="False">
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="50" Header="Id" Binding="{Binding Id}" />
+                <DataGridTextColumn Width="120" Header="名前" Binding="{Binding Name}" />
+                <DataGridTextColumn Width="250" Header="住所" Binding="{Binding Address}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
