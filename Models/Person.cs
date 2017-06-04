@@ -1,14 +1,61 @@
 ﻿using Livet;
 using System;
 
+using System.Collections.ObjectModel;
+
 namespace SampleWPFApplication.Models {
-    public class TurningParameter : NotificationObject
+
+    public class CuttingParameter : NotificationObject
+    {
+        private string _process;
+        public string Process
+        {
+            get { return _process; }
+            set
+            {
+                if (_process != value)
+                {
+                    _process = value;
+                    RaisePropertyChanged("Process");
+                }
+            }
+        }
+        //private string _speed;
+        //public string Speed
+        //{
+        //    get { return _speed; }
+        //    set
+        //    {
+        //        if (_speed != value)
+        //        {
+        //            _speed = value;
+        //            RaisePropertyChanged("Speed");
+        //        }
+        //    }
+        //}
+        //private string _feed;
+        //public string Feed
+        //{
+        //    get { return _feed; }
+        //    set
+        //    {
+        //        if (_feed != value)
+        //        {
+        //            _feed = value;
+        //            RaisePropertyChanged("Feed");
+        //        }
+        //    }
+        //}
+    }
+
+
+    public class TurningParameter : CuttingParameter
     {
         private string _speed;
-        public string Speed 
+        public string Speed
         {
             get { return _speed; }
-            set 
+            set
             {
                 if (_speed != value)
                 {
@@ -19,7 +66,7 @@ namespace SampleWPFApplication.Models {
         }
     }
 
-    public class MillingParameter : NotificationObject
+    public class MillingParameter : CuttingParameter
     {
         private string _feed;
         public string Feed
@@ -36,9 +83,6 @@ namespace SampleWPFApplication.Models {
         }
     }
 
-    public class MillingParameter : NotificationObject
-    { }
-
     public class Person : NotificationObject, ICloneable {
 
         #region Id変更通知プロパティ
@@ -51,6 +95,20 @@ namespace SampleWPFApplication.Models {
                     return;
                 _Id = value;
                 RaisePropertyChanged("Id");
+            }
+        }
+
+        private System.Windows.Visibility _idVisibility = System.Windows.Visibility.Visible;
+
+        public System.Windows.Visibility IdVisibility
+        {
+            get { return _idVisibility; }
+            set
+            {
+                if (_idVisibility == value)
+                    return;
+                _idVisibility = value;
+                RaisePropertyChanged("IdVisibiliity");
             }
         }
         #endregion
@@ -79,6 +137,22 @@ namespace SampleWPFApplication.Models {
                     return;
                 _Address = value;
                 RaisePropertyChanged("Address");
+            }
+        }
+        #endregion
+
+        #region CuttingParameters
+        private ObservableCollection<CuttingParameter> _cuttingParmeters = new ObservableCollection<CuttingParameter>();
+
+        public ObservableCollection<CuttingParameter> CuttingParameters
+        {
+            get { return _cuttingParmeters; }
+            set
+            {
+                if (_cuttingParmeters == value)
+                    return;
+                _cuttingParmeters = value;
+                RaisePropertyChanged("CuttingParameters");
             }
         }
         #endregion

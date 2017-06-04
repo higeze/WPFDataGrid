@@ -6,10 +6,72 @@
         xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
         xmlns:v="clr-namespace:SampleWPFApplication.Views"
         xmlns:vm="clr-namespace:SampleWPFApplication.ViewModels"
-        Title="社員リスト" Height="300" Width="500" WindowStartupLocation="CenterScreen">
+        Title="社員リスト" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <Style x:Key="WrapTextBlockStyle" TargetType="{x:Type TextBlock}"
+            BasedOn="{x:Static DataGridTextColumn.DefaultElementStyle}">
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style x:Key="WrapTextBoxStyle" TargetType="{x:Type TextBox}"
+            BasedOn="{x:Static DataGridTextColumn.DefaultEditingElementStyle}">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="AcceptsReturn" Value="True" />
+        </Style>
+
+        <DataTemplate x:Key="TurningTemplate">
+            <WrapPanel>
+            <TextBlock>Turn</TextBlock>
+            <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding Path=CuttingParameters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Speed" Binding="{Binding Speed}"/>
+                    </DataGrid.Columns>
+                        
+            </DataGrid>
+            </WrapPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MillingTemplate">
+            <WrapPanel>
+            <TextBlock>Mill</TextBlock>
+                <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding  Path=CuttingParameters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Feed" Binding="{Binding Feed}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </WrapPanel>
+        </DataTemplate>
+
+            <vm:PersonToPersonsConverter x:Key="PersonToPersonsConverter"/>
+
+        <vm:VisiblityToInverseBooleanConverter x:Key="VisiblityToInverseBooleanConverter"/>
+
+        <ContextMenu x:Key="ColumnChooserMenu" x:Shared="False"
+             DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}" 
+             ItemsSource="{Binding Columns, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
+            <ContextMenu.ItemContainerStyle>
+                <Style TargetType="MenuItem">
+                    <Setter Property="Header" Value="{Binding Header}"/>
+                    <Setter Property="AutomationProperties.Name" Value="{Binding Header}"/>
+                    <Setter Property="IsCheckable" Value="True" />
+                    <Setter Property="IsChecked" Value="{Binding Visibility, Mode=TwoWay, Converter={StaticResource VisiblityToInverseBooleanConverter}}" />
+                    <!--<Setter Property="IsChecked" Value="{Binding Visibility, Mode=TwoWay}" />-->
+                </Style>
+            </ContextMenu.ItemContainerStyle>
+        </ContextMenu>
+
+        <Style x:Key="ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="ContextMenu" Value="{StaticResource ColumnChooserMenu}" />
+        </Style>
+
+        <ContextMenu x:Key="GridItemsContextMenu" >
+            <MenuItem Header="Launch Do Some other action"/>
+        </ContextMenu>
+
+    </Window.Resources>
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closed">
@@ -22,21 +84,123 @@
         </l:InteractionMessageTrigger>
     </i:Interaction.Triggers>
 
+
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
-            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Persons}" IsReadOnly="True" 
+        <DataGrid Grid.Row="0" ItemsSource="{Binding Persons}" IsReadOnly="False" CanUserAddRows="False"
                   SelectedItem="{Binding Person}" AutoGenerateColumns="False">
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCommand}" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <DataGridTextColumn Width="50" Header="Id" Binding="{Binding Id}" />
-                <DataGridTextColumn Width="120" Header="名前" Binding="{Binding Name}" />
-                <DataGridTextColumn Width="250" Header="住所" Binding="{Binding Address}" />
+                <DataGridTextColumn Width="50" Header="Id" Binding="{Binding Id}" IsReadOnly="True" />
+                <DataGridTextColumn Width="120" Header="名前" Binding="{Binding Name}" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                <DataGridTextColumn Width="250" Header="住所" Binding="{Binding Address}" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                <DataGridTemplateColumn Header="Cutting Parameter">
+                    <!--<DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding  Path=CuttingParameters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Feed" Binding="{Binding Feed}"/>
+                                </DataGrid.Columns>
+
+                            </DataGrid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>-->
+
+                    <DataGridTemplateColumn.CellTemplateSelector>
+
+                        <vm:CuttingParameterTemplateSelector 
+
+			TurningTemplate="{StaticResource TurningTemplate}"
+
+			MillingTemplate="{StaticResource MillingTemplate}"/>
+
+                    </DataGridTemplateColumn.CellTemplateSelector>
+
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <!--<Viewbox Grid.Row="1" Stretch="Uniform" Width="400" Height="200" HorizontalAlignment="Left" VerticalAlignment="Top">-->
+        <StackPanel Grid.Row="1">
+            <TextBlock>Top</TextBlock>
+        <DataGrid 
+            
+            ItemsSource="{Binding Person, Mode=OneWay, Converter={StaticResource PersonToPersonsConverter}}"
+            HeadersVisibility="Column"
+            IsReadOnly="False"
+            CanUserAddRows="False"
+            AutoGenerateColumns="False"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            CanUserResizeColumns="False"
+            HorizontalScrollBarVisibility="Hidden"
+            VerticalScrollBarVisibility="Hidden" 
+            ContextMenu="{StaticResource GridItemsContextMenu}">
+            <DataGrid.LayoutTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="90"/>
+                    <MatrixTransform Matrix="-1,0,0,1,0,0"/>
+                </TransformGroup>
+            </DataGrid.LayoutTransform>
+            <DataGrid.ColumnHeaderStyle>
+                <!--<Style TargetType="{x:Type DataGridColumnHeader}"
+                BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">-->
+                    <Style TargetType="{x:Type DataGridColumnHeader}"
+                BasedOn="{StaticResource ColumnHeaderStyle}">
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90"/>
+                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Width" Value="200" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style  TargetType="DataGridCell">
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90"/>
+                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Width" Value="200" />
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.Columns>
+                    <DataGridTextColumn  Header="Id" Binding="{Binding Id}" IsReadOnly="True" Visibility="{Binding Path=IdVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn  Header="名前" Binding="{Binding Name}" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                <DataGridTextColumn  Header="住所" Binding="{Binding Address}" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+            </DataGrid.Columns>
+
+            <!--<DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="LayoutTransform">
+                            <Setter.Value>
+                                <TransformGroup>
+                                    <RotateTransform Angle="90"/>
+                                </TransformGroup>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.LayoutTransform>
+                    <TransformGroup>
+                        <RotateTransform Angle="-90"/>
+                    </TransformGroup>
+                </DataGrid.LayoutTransform>-->
+        </DataGrid>
+        <!--</Viewbox>-->
+            <TextBlock>Bottom</TextBlock>
+        </StackPanel>
     </Grid>
 </Window>

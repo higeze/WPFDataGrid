@@ -87,7 +87,10 @@
     </ApplicationDefinition>
     <Compile Include="Models\Person.cs" />
     <Compile Include="Models\Persons.cs" />
+    <Compile Include="ViewModels\CuttingParameterSelector.cs" />
+    <Compile Include="ViewModels\PersonToPersonsConverter.cs" />
     <Compile Include="ViewModels\SubViewModel.cs" />
+    <Compile Include="ViewModels\VisiblityToInverseBooleanConverter.cs" />
     <Compile Include="Views\SubWindow.xaml.cs">
       <DependentUpon>SubWindow.xaml</DependentUpon>
     </Compile>

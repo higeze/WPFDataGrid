@@ -15,6 +15,12 @@ namespace SampleWPFApplication.Models {
             ret.Add(new Person() { Id = 4, Name = "佐藤", Address = "品川区" });
             ret.Add(new Person() { Id = 5, Name = "藤原", Address = "中央区" });
 
+            ret[0].CuttingParameters.Add(new TurningParameter() { Process = "Turning", Speed = "20" });
+            ret[1].CuttingParameters.Add(new MillingParameter() { Process = "Milling", Feed = "30" });
+            ret[2].CuttingParameters.Add(new TurningParameter() { Process = "Turning", Speed = "40" });
+            ret[3].CuttingParameters.Add(new MillingParameter() { Process = "Milling", Feed = "50" });
+            ret[4].CuttingParameters.Add(new MillingParameter() { Process = "Milling", Feed = "60" });
+
             return ret;
         }
     }
