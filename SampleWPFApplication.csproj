@@ -91,6 +91,10 @@
     <Compile Include="ViewModels\PersonToPersonsConverter.cs" />
     <Compile Include="ViewModels\SubViewModel.cs" />
     <Compile Include="ViewModels\VisiblityToInverseBooleanConverter.cs" />
+    <Compile Include="Views\ImageEx.cs" />
+    <Compile Include="Views\ManufacturingDocument.xaml.cs">
+      <DependentUpon>ManufacturingDocument.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SubWindow.xaml.cs">
       <DependentUpon>SubWindow.xaml</DependentUpon>
     </Compile>
@@ -107,6 +111,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ManufacturingDocument.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\SubWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

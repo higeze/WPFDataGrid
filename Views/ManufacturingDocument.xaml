@@ -1,0 +1,376 @@
+﻿<UserControl x:Class="Mfg.ManufacturingDocument"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+            xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+            xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"         
+            xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"        
+            xmlns:vm="clr-namespace:Mfg.ViewModel"
+                         xmlns:vw="clr-namespace:Mfg.View"
+            xmlns:local="clr-namespace:Mfg"
+            xmlns:util="clr-namespace:AvalonDockUtil;assembly=AvalonDockUtil"
+            xmlns:exshape="clr-namespace:Microsoft.Expression.Shapes;assembly=Microsoft.Expression.Drawing"
+            xmlns:exctrl="clr-namespace:Microsoft.Expression.Controls;assembly=Microsoft.Expression.Drawing"
+            xmlns:jas="clr-namespace:WPF.JoshSmith.Controls" 
+            mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source ="View/ManufacturingDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="Button">
+                <Setter Property="Visibility" Value="{Binding Path=IsEditing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </Style>
+            <Style TargetType="Rectangle">
+                <Setter Property="Visibility" Value="{Binding Path=IsEditing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToInverseVisibilityConverter}}" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+        <DockPanel Height="1063" Width="1567" Margin="10,10,10,10">
+            <DockPanel DockPanel.Dock="Top">
+                <WrapPanel DockPanel.Dock="Top">
+                    <CheckBox IsChecked="{Binding Path=Is, Source={StaticResource Async}, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock FontWeight="Bold">ID</TextBlock>
+                <TextBox Text="{Binding Path=ID, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+                <TextBlock  FontWeight="Bold">Location</TextBlock>
+                <TextBox Text="{Binding Path=CutUpLocation, Mode=TwoWay}" AcceptsReturn="True" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
+                <TextBlock  FontWeight="Bold">Remarks</TextBlock>
+                <TextBox Text="{Binding Path=Remarks}" AcceptsReturn="True" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
+                </WrapPanel>
+                <DataGrid 
+                         ItemsSource="{Binding TwoDimensionArrows}"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False">
+                    <!--<DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="FontSize" Value="8" />
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="FontSize" Value="8"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>-->
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Arrow">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>                              
+                                    <Viewbox Stretch="Uniform" Width="20" Height="20">
+                                        <Grid>
+                                        <Grid Canvas.ZIndex="11" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Ellipse Canvas.ZIndex="12" Stroke="Red" Fill="White"  ></Ellipse>
+                                            <TextBlock FontStretch="Expanded" Canvas.ZIndex="13" Foreground="Red" Text ="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Grid>
+                                        <exshape:BlockArrow
+                                            Canvas.ZIndex="10"
+                                            Width="{Binding Path=Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Height="{Binding Path=Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Fill="Red" Stroke="Red"
+                                            Orientation="Up"
+                                            ArrowBodySize="0.4"  ArrowheadAngle="90" >
+
+                                            <!--<exshape:BlockArrow.RenderTransform>
+                                                <RotateTransform Angle="{Binding Path=Angle,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CenterX="6" CenterY="15" />
+                                            </exshape:BlockArrow.RenderTransform>-->
+                                        </exshape:BlockArrow>
+                                    </Grid>
+                                    </Viewbox>
+
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Comment" Binding="{Binding Path=Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+
+                    </DataGrid.Columns>
+                </DataGrid>
+                <!--<Button Content="+" Command="{Binding Path=AddDocumentCommand, ElementName=DocumentsDataGrid}"  />
+                    <Button Content="-" Command="{Binding Path=RemoveDocumentCommand, ElementName=DocumentsDataGrid}" />-->
+                <!--<DataGrid Style="{StaticResource TransposeDataGridStyle}"
+                        ItemsSource="{Binding ReferenceDocuments, Mode=TwoWay, Converter={StaticResource SingleToMultiConverter}}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Path=ID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <DataGridTextColumn Header="Op.No." Binding="{Binding Path=OperationNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>-->
+            </DockPanel>
+            <Grid DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <!--<Viewbox DockPanel.Dock="Left" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top">-->
+                <StackPanel DockPanel.Dock="Left">
+                        <TextBlock Text="General Information" FontWeight="Bold"/>
+                        <DataGrid Style="{StaticResource TransposeDataGridStyle}"
+                        ItemsSource="{Binding GeneralInfo, Mode=TwoWay, Converter={StaticResource SingleToMultiConverter}}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="PVA No" Binding="{Binding Path=PVANumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Part No." Binding="{Binding Path=PartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Part Name" Binding="{Binding Path=PartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Part Material" Binding="{Binding Path=PartMaterial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Prg.No." Binding="{Binding Path=ProgramNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Prg.Rev." Binding="{Binding Path=ProgramRevision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Op.No." Binding="{Binding Path=OperationNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock Text="Process" FontWeight="Bold" />
+                        <ComboBox ItemsSource="{Binding Source={StaticResource ProcessTypeKey}}" SelectedItem="{Binding Path=Process, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="Cutting Parameters" FontWeight="Bold" />
+                    <Grid>
+                        <UserControl Template="{StaticResource TransposeCuttingTemplate}"  />
+                        <Rectangle Fill="Gray" />
+                    </Grid>
+                    <TextBlock Text="Tool Information" FontWeight="Bold" />
+                    <Grid>
+                        <DataGrid Style="{StaticResource TransposeDataGridStyle}"
+                    ItemsSource="{Binding ToolInfo, Mode=TwoWay, Converter={StaticResource SingleToMultiConverter}}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Tool No." Binding="{Binding Path=ToolNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Holder No." Binding="{Binding Path=HolderNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Tool Material" Binding="{Binding Path=ToolMaterial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Tool Coating" Binding="{Binding Path=ToolCoating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Tool Maker" Binding="{Binding Path=ToolMaker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Tool Cat.No." Binding="{Binding Path=ToolCatalogNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Coolant Delivery" Binding="{Binding Path=CoolantDelivery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Coolant Hole in Tool" Binding="{Binding Path=CoolantHoleInTool, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Tool Regrinding Limit" Binding="{Binding Path=ToolRegrindingLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Tool Change Point" Binding="{Binding Path=ToolChangePoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Tool Radius" Binding="{Binding Path=ToolRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Tool Length" Binding="{Binding Path=ToolLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Rectangle Fill="Gray" />
+                    </Grid>
+
+
+                    <TextBlock Text="Coolant Information" FontWeight="Bold" />
+                    <Grid>
+                        <DataGrid Style="{StaticResource TransposeDataGridStyle}"
+                    ItemsSource="{Binding CoolantInfo, Mode=TwoWay, Converter={StaticResource SingleToMultiConverter}}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Coolant Name/Type" Binding="{Binding Path=CoolantNameType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Concentration Ratio" Binding="{Binding Path=ConcentrationRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Pressure" Binding="{Binding Path=Pressure, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <DataGridTextColumn Header="Flowrate" Binding="{Binding Path=Flowrate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Rectangle Fill="Gray" />
+                    </Grid>
+                    
+                </StackPanel>
+                <!--</Viewbox>-->
+            </Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="3*" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
+                </Grid.ColumnDefinitions>
+
+                <DockPanel Grid.Row="0" Grid.Column="0" >
+                    <WrapPanel DockPanel.Dock="Top" >
+                        <TextBlock Text="Tool Sketch" FontWeight="Bold" />
+                        <Button Content="↓" Command="{Binding Path=PasteToolSketchImageCommand, Mode=OneWay}"  />
+                        <Button Content="↑" Command="{Binding Path=CopyToolSketchImageCommand, Mode=OneWay}"  />
+
+
+                    </WrapPanel>
+                    <Grid>
+                    <Image Source="{Binding Path=ToolSketchImage, IsAsync=True}" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                    <Rectangle Fill="Gray" />
+                    </Grid>
+                </DockPanel>
+
+                <DockPanel Grid.Row="1" Grid.Column="0" >
+                    <WrapPanel DockPanel.Dock="Top">
+                        <TextBlock DockPanel.Dock="Top" Text="Tool Path" FontWeight="Bold"  />
+                        <Button Content="↓" Command="{Binding Path=PasteToolPathImageCommand, Mode=OneWay}"  />
+                        <Button Content="↑" Command="{Binding Path=CopyToolPathImageCommand, Mode=OneWay}"  />
+
+                        <Button Content="+" Command="{Binding Path=AddToolPathArrowCommand}" />
+                        <Button Content="-" Command="{Binding Path=RemoveLastToolPathArrowCommand}" />
+                    </WrapPanel>
+                    <Grid>
+                    <local:DrawableImage Image="{Binding Path=ToolPathImage}" Arrows="{Binding Path=ToolPathArrows}" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ShowToolPathImage"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </local:DrawableImage>
+                        <Rectangle Fill="Gray" />
+                    </Grid>
+                </DockPanel>
+
+                <DockPanel Grid.Row="0" Grid.Column="1">
+
+                    <WrapPanel DockPanel.Dock="Top">
+                        <TextBlock Text="2D Image" FontWeight="Bold" />
+                        <Button Content="↓" Command="{Binding Path=PasteTwoDimensionImageCommand, Mode=OneWay}"  />
+                        <Button Content="↑" Command="{Binding Path=CopyTwoDimensionImageCommand, Mode=OneWay}"  />
+
+                        <Button Content="+" Command="{Binding Path=AddTwoDimensionArrowCommand}" />
+                        <Button Content="-" Command="{Binding Path=RemoveLastTwoDimensionArrowCommand}" />
+                    </WrapPanel>
+                    <local:DrawableImage Grid.Row="1" Image="{Binding Path=TwoDimensionImage}" Arrows="{Binding Path=TwoDimensionArrows}" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="ShowTwoDimensionImage"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </local:DrawableImage>
+                </DockPanel>
+
+                <DockPanel Grid.Row="1" Grid.Column="1">
+                    <WrapPanel DockPanel.Dock="Top" >
+                        <TextBlock Text="3D Image" FontWeight="Bold" />
+                        <Button Content="↓" Command="{Binding Path=PasteThreeDimensionImageCommand, Mode=OneWay}"  />
+                        <Button Content="↑" Command="{Binding Path=CopyThreeDimensionImageCommand, Mode=OneWay}"  />
+                    </WrapPanel>
+                    <Image Source="{Binding Path=ThreeDimensionImage, IsAsync=True}" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </DockPanel>
+
+                <DockPanel Grid.Row="0" Grid.Column="2">
+                    <WrapPanel DockPanel.Dock="Top">
+                        <TextBlock  Text="Worn Tool" FontWeight="Bold" />
+                        <Button Content="+" Command="{Binding Path=AddWornToolInfoCommand, Mode=OneWay}"  />
+                        <Button Content="-" Command="{Binding Path=RemoveLastWornToolInfoCommand, Mode=OneWay}" />
+                    </WrapPanel>
+                    <DataGrid
+                            x:Name="WornToolInfosDataGrid" 
+                            ItemsSource="{Binding Path=WornToolInfos, Mode=TwoWay}" 
+                            SelectedItem="{Binding Path=SelectedWornToolInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            AutoGenerateColumns="False"
+                            HeadersVisibility="Column"
+                            CanUserAddRows="False" 
+                            HorizontalAlignment="Stretch" 
+                            VerticalAlignment="Stretch"
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Auto">
+                        <DataGrid.Resources>
+                            <vm:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                        </DataGrid.Resources>
+                        <DataGrid.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding ShowWornToolImageCommand}" />
+                        </DataGrid.InputBindings>
+                        <!--<DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="FontSize" Value="8" />
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="FontSize" Value="8"/>
+                                <Setter Property="ContentTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <TextBlock TextWrapping="Wrap" Text="{Binding}"></TextBlock>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>-->
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Picture" Width="100" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <WrapPanel FlowDirection="LeftToRight">
+                                            <Button Content="↓" Command="{Binding Path=PasteWornToolImageCommand, Mode=OneWay}"
+                                                    Visibility="{Binding Path=Data.IsEditing, Source={StaticResource proxy}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            <Button Content="↑" Command="{Binding Path=CopyWornToolImageCommand, Mode=OneWay}"  
+                                                    Visibility="{Binding Path=Data.IsEditing, Source={StaticResource proxy}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                            <Image Source="{Binding Path=WornToolImage, IsAsync=True}"/>
+                                        </WrapPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Worn Width" Binding="{Binding Path=WornWidth, Mode=TwoWay}" Width="70" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="Chipping" Binding="{Binding Path=Chipping, Mode=TwoWay}" Width="70" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="Welding" Binding="{Binding Path=Welding, Mode=TwoWay}" Width="70" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                            <DataGridTextColumn Header="Abnormal Wear Tear" Binding="{Binding Path=AbnormalWearTear, Mode=TwoWay}" Width="70" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                            <DataGridTextColumn Header="Plastic Deformation" Binding="{Binding Path=PlasticDeformation, Mode=TwoWay}" Width="70" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                            <DataGridTextColumn Header="Report No." Binding="{Binding Path=ReportNumber, Mode=TwoWay}" Width="70" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                            <DataGridTextColumn Header="Remarks" Binding="{Binding Path=Remarks, Mode=TwoWay}" Width="70" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+
+                <DockPanel Grid.Row="1" Grid.Column="2">
+                    <WrapPanel DockPanel.Dock="Top">
+                        <TextBlock  Text="Micro" FontWeight="Bold" />
+                        <Button Content="+" Command="{Binding Path=AddMicroInfoCommand, Mode=OneWay}" />
+                        <Button Content="-" Command="{Binding Path=RemoveLastMicroInfoCommand, Mode=OneWay}" />
+                    </WrapPanel>
+                    <ItemsControl ItemsSource="{Binding MicroInfos}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="1" BorderBrush="Black">
+                                <vw:ImageEx Source="{Binding Path=MicrostructuralImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsAsync="{Binding Path=Is, Source={StaticResource Async}, UpdateSourceTrigger=PropertyChanged}" />
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--<DataGrid
+                        x:Name="MicroInfosDataGrid" 
+                        ItemsSource="{Binding Path=MicroInfos}"
+                        SelectedItem="{Binding Path=SelectedMicroInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        AutoGenerateColumns="False" 
+                        HeadersVisibility="Column" 
+                        CanUserAddRows="False" 
+HorizontalAlignment="Stretch" 
+                        VerticalAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto">
+                        <DataGrid.Resources>
+                            <vm:BindingProxy x:Key="proxy" Data="{Binding}"/>
+                        </DataGrid.Resources>
+
+                        <DataGrid.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding ShowMicroImageCommand}" />
+                        </DataGrid.InputBindings>
+
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="IsAsync" Binding="{Binding Path=IsAsync, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <DataGridTemplateColumn Header="Picture" Width="100" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <WrapPanel FlowDirection="LeftToRight">
+                                            <Button Content="↓" Command="{Binding Path=PasteMicrostructuralImageCommand, Mode=OneWay}"
+                                                    Visibility="{Binding Path=Data.IsEditing, Source={StaticResource proxy}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            <Button Content="↑" Command="{Binding Path=CopyMicrostructuralImageCommand, Mode=OneWay}"
+                                                    Visibility="{Binding Path=Data.IsEditing, Source={StaticResource proxy}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            <vw:ImageEx Source="{Binding Path=MicrostructuralImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsAsync="{Binding Path=Is, Source={StaticResource Async}, UpdateSourceTrigger=PropertyChanged}" />
+                                        </WrapPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Path=PositionID, Mode=TwoWay}" Width="30" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                            <DataGridTextColumn Header="Direction" Binding="{Binding Path=Direction, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}"/>
+                            <DataGridTextColumn Header="Slightly" Binding="{Binding Path=SlightlyDistortedSurface, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="Severely" Binding="{Binding Path=SeverelyDistortedSurface, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="WEL" Binding="{Binding Path=Wel, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="Strain Line" Binding="{Binding Path=DistortedStrainLines, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="MLSTPA" Binding="{Binding Path=MachiningLapsStepsTearsPeeningAnomaries, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="Other Machining artifacts" Binding="{Binding Path=OtherMachiningArtifacts, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="Report No." Binding="{Binding Path=ReportNumber, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                            <DataGridTextColumn Header="Remarks" Binding="{Binding Path=Remarks, Mode=TwoWay}" Width="50" ElementStyle="{StaticResource WrapTextBlockStyle}" EditingElementStyle="{StaticResource WrapTextBoxStyle}" />
+                        </DataGrid.Columns>
+                    </DataGrid>-->
+                </DockPanel>
+
+
+            </Grid>
+        </DockPanel>
+    </ScrollViewer>
+</UserControl>
